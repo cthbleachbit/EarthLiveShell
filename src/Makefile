@@ -20,8 +20,8 @@ install:  $(SCRIPTS)
 	$(INSTALL) -d $(DESTDIR)$(applicationdir)
 	$(INSTALL) -m755 earthlive-shell $(DESTDIR)$(bindir)
 	$(INSTALL) -m755 earthlive-daemon $(DESTDIR)$(bindir)
-	$(INSTALL) -m755 conf/EarthLiveStart.desktop $(DESTDIR)$(applicationdir)
-	$(INSTALL) -m755 conf/EarthLiveControl.desktop $(DESTDIR)$(applicationdir)
+	$(INSTALL) -m644 conf/EarthLiveStart.desktop $(DESTDIR)$(applicationdir)
+	$(INSTALL) -m644 conf/EarthLiveControl.desktop $(DESTDIR)$(applicationdir)
 
 clean:
 	rm -rf $(SCRIPTS)
