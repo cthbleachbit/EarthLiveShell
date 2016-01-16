@@ -6,4 +6,5 @@
 *~
 
 # Makefile generated
-src/lib/*.sh
+src/earthlive-shell
+src/earthlive-daemon

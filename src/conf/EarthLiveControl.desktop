@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=EarthLive Control
+Comment=Live view of the Earth from space
+Exec=earthlive-shell --interactive
+Icon=preferences
+Terminal=false
+Type=Application

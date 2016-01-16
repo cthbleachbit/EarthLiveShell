@@ -25,17 +25,17 @@ last=""
 
 echo $$ > ${opt_store}/pid
 while ((1)); do
-	img_json=`curl "http://himawari8.nict.go.jp/img/D531106/latest.json"`
+	img_json=`curl -# "http://himawari8.nict.go.jp/img/D531106/latest.json"`
 	if [[ ! "${last}" = "${img_json}" ]]; then
 		last=${img_json}
 		now=${img_json:9:19}
 		echo $now
 		
-		url_prefix="http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
+		url_prefix="@cdn_prefix@http:///himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
 		url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
 		url_suffix="_0_0.png"
 		url="${url_prefix}${url_time}${url_suffix}"
-		curl -o "${opt_store}/orig.png" "$url"
+		curl -# -o "${opt_store}/orig.png" "$url"
 		convert "${opt_store}/orig.png" -gravity center -background black -extent ${opt_res_x}x${opt_res_y} "${opt_store}/final.jpg"
 	fi
 	for ((i=0; i<${opt_interval}; i++)); do
