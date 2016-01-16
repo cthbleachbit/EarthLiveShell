@@ -1,0 +1,48 @@
+#!/bin/bash
+#==========================================================
+# EarthLiveShell
+# Main Script
+# Written by cth451 <cth451@gmail.com>
+# Idea by bitdust (https://github.com/bitdust)
+# Licensed under LGPL 3
+#
+# This program is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU Lesser General Public
+# License for more details.
+#==========================================================
+
+opt_store="${HOME}/.earthliveshell"
+[[ -d ${opt_store} ]] || mkdir ${opt_store}
+[[ -f ${opt_store}/EarthLive.conf ]] || touch ${opt_store}/EarthLive.conf
+pid=`cat ${opt_store}/pid`
+
+start () {
+	res_x=`xdpyinfo | awk -F'[ x]+' '/dimensions:/{print $3}'`
+	res_y=`xdpyinfo | awk -F'[ x]+' '/dimensions:/{print $4}'`
+	setsid earthlive-daemon $opt_interval $res_x $res_y &
+}
+
+stop () {
+	kill -TERM $pid
+}
+
+#options () {
+#}
+
+
+if [[ -n $(ps -p$pid -o pid=) ]]; then
+	MAJOR=`zenity --list --text="EarthLive Service is <b>running</b>." \
+		--column "Ops" "Stop" "Options"`
+else
+	MAJOR=`zenity --list --text="EarthLive Service is <b>not running</b>." \
+		--column "Ops" "Start" "Options"`
+fi
+
+case "$MAJOR" in
+	"Start")	start;;
+	"Stop")		stop;;
+	"Options")	options;;
+esac
+

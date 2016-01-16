@@ -1,0 +1,9 @@
+# vim
+*.tmp
+*.swp
+
+# gedit
+*~
+
+# Makefile generated
+src/lib/*.sh

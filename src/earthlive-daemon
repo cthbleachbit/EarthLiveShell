@@ -1,0 +1,44 @@
+#!/bin/bash
+#==========================================================
+# EarthLiveShell
+# Background Daemon Script
+# Written by cth451 <cth451@gmail.com>
+# Idea by bitdust (https://github.com/bitdust)
+# Licensed under LGPL 3
+#
+# This program is distributed in the hope that it will be
+# useful, but WITHOUT ANY WARRANTY; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE. See the GNU Lesser General Public
+# License for more details.
+#==========================================================
+
+# interval between image checking in minutes
+[[ "${1}" = "" ]] && opt_interval=30 || opt_interval=${1}
+
+# the resolution of target image
+[[ "${2}" = "" ]] && opt_res_x=1600 || opt_res_x=${2}
+[[ "${3}" = "" ]] && opt_res_y=900 || opt_res_y=${3}
+
+opt_store="${HOME}/.earthliveshell"
+last=""
+
+echo $$ > ${opt_store}/pid
+while ((1)); do
+	img_json=`curl "http://himawari8.nict.go.jp/img/D531106/latest.json"`
+	if [[ ! "${last}" = "${img_json}" ]]; then
+		last=${img_json}
+		now=${img_json:9:19}
+		echo $now
+		
+		url_prefix="http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
+		url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
+		url_suffix="_0_0.png"
+		url="${url_prefix}${url_time}${url_suffix}"
+		curl -o "${opt_store}/orig.png" "$url"
+		convert "${opt_store}/orig.png" -gravity center -background black -extent ${opt_res_x}x${opt_res_y} "${opt_store}/final.jpg"
+	fi
+	for ((i=0; i<${opt_interval}; i++)); do
+		sleep 60
+	done
+done
