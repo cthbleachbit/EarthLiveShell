@@ -2,8 +2,8 @@
 #==========================================================
 # EarthLiveShell
 # Main Script
-# Written by cth451 <cth451@gmail.com>
-# Idea by bitdust (https://github.com/bitdust)
+# Copyright (C) James Chai (cth451) <cth451@gmail.com>
+# Inspired by bitdust's [ https://github.com/bitdust ]
 # Licensed under LGPL 3
 #
 # This program is distributed in the hope that it will be
@@ -14,23 +14,23 @@
 #==========================================================
 
 opt_store="${HOME}/.earthliveshell"
-[[ -d ${opt_store} ]] || mkdir ${opt_store}
-[[ -f ${opt_store}/EarthLive.rc ]] || touch ${opt_store}/EarthLive.rc
-opt_interval=30.
+[[ -d ${opt_store} ]] || mkdir "${opt_store}"
+[[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
+opt_interval=30
 state_has_modified=0
 
 pid=`cat ${opt_store}/pid`
-[[ -n $(ps -p$pid -o pid=) ]] && state_running=1 || state_running=0
+[[ -d /proc/$pid ]] && state_running=1 || state_running=0
 . "${opt_store}/EarthLive.rc"
 
 start () {
 	opt_original_desktop=`gsettings get org.gnome.desktop.background picture-uri`
 	opt_original_screensaver=`gsettings get org.gnome.desktop.screensaver picture-uri`
-	[[ $opt_original_desktop =~ ${opt_store} ]] || modify_opt "opt_original_desktop" $opt_original_desktop
-	[[ $opt_original_desktop =~ ${opt_store} ]] || modify_opt "opt_original_screensaver" $opt_original_screensaver
+	[[ $opt_original_desktop == *"${opt_store}"* ]] || modify_opt "opt_original_desktop" "$opt_original_desktop"
+	[[ $opt_original_desktop == *"${opt_store}"* ]] || modify_opt "opt_original_screensaver" "$opt_original_screensaver"
 	res_x=`xdpyinfo | awk -F'[ x]+' '/dimensions:/{print $3}'`
 	res_y=`xdpyinfo | awk -F'[ x]+' '/dimensions:/{print $4}'`
-	setsid earthlive-daemon $opt_interval $res_x $res_y &
+	setsid earthlive-daemon "$opt_interval" "$res_x" "$res_y" &
 	gsettings set org.gnome.desktop.background picture-uri "'file://${opt_store}/final.jpg'"
 	gsettings set org.gnome.desktop.screensaver picture-uri "'file://${opt_store}/final.jpg'"
 }
@@ -43,7 +43,7 @@ stop () {
 
 modify_opt () {
 	sed -i "${opt_store}/EarthLive.rc" -e "/${1}=.*$/D"
-	echo "${1}=${2}" >> ${opt_store}/EarthLive.rc
+	echo "${1}=${2}" >> "${opt_store}/EarthLive.rc"
 	state_has_modified=1
 }
 
