@@ -2,7 +2,7 @@ EarthLiveShell
 ==============
 A [EarthLiveSharp](https://github.com/bitdust/EarthLiveSharp) Linux Shell implementation.
 
-Images from [himawari8](himawari8.nict.go.jp) are currently delivered by my Cloudinary CDN. Change `cdn-prefix` in `src/Makefile` to your own CDN account.
+Images from [himawari8](http://himawari8.nict.go.jp) are currently delivered by my Cloudinary CDN. Change `cdn-prefix` in `src/Makefile` to your own CDN account.
 
 Install
 -------
