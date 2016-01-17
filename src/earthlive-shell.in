@@ -23,47 +23,80 @@ pid=`cat ${opt_store}/pid`
 [[ -d /proc/$pid ]] && state_running=1 || state_running=0
 . "${opt_store}/EarthLive.rc"
 
+save_original () {
+	opt_background_picture_options=`gsettings get org.gnome.desktop.background picture-options`
+	opt_background_picture_uri=`gsettings get org.gnome.desktop.background picture-uri`
+	opt_screensaver_picture_options=`gsettings get org.gnome.desktop.screensaver picture-options`
+	opt_screensaver_picture_uri=`gsettings get org.gnome.desktop.screensaver picture-uri`
+	
+	[[ $opt_background_picture_uri == *"${opt_store}"* ]] && exit 0
+	[[ $opt_screensaver_picture_uri == *"${opt_store}"* ]] && exit 0
+	
+	modify_opt "opt_background_picture_options"
+	modify_opt "opt_background_picture_uri"
+	modify_opt "opt_screensaver_picture_options"
+	modify_opt "opt_screensaver_picture_uri"
+}
+
+restore_original () {
+	gsettings set org.gnome.desktop.background picture-options "$opt_background_picture_options"
+	gsettings set org.gnome.desktop.background picture-uri "$opt_background_picture_uri"
+	gsettings set org.gnome.desktop.screensaver picture-options "$opt_screensaver_picture_options"
+	gsettings set org.gnome.desktop.screensaver picture-uri "$opt_screensaver_picture_uri"
+}
+
 start () {
-	opt_original_desktop=`gsettings get org.gnome.desktop.background picture-uri`
-	opt_original_screensaver=`gsettings get org.gnome.desktop.screensaver picture-uri`
-	[[ $opt_original_desktop == *"${opt_store}"* ]] || modify_opt "opt_original_desktop" "$opt_original_desktop"
-	[[ $opt_original_desktop == *"${opt_store}"* ]] || modify_opt "opt_original_screensaver" "$opt_original_screensaver"
-	res_x=`xdpyinfo | awk -F'[ x]+' '/dimensions:/{print $3}'`
-	res_y=`xdpyinfo | awk -F'[ x]+' '/dimensions:/{print $4}'`
-	setsid earthlive-daemon "$opt_interval" "$res_x" "$res_y" &
-	gsettings set org.gnome.desktop.background picture-uri "'file://${opt_store}/final.jpg'"
-	gsettings set org.gnome.desktop.screensaver picture-uri "'file://${opt_store}/final.jpg'"
+	save_original
+	setsid earthlive-daemon "$opt_interval" &
+	# picture-options 'none', 'wallpaper', 'centered', 'scaled', 'stretched', 'zoom', 'spanned'
+	gsettings set org.gnome.desktop.background picture-options "'centered'"
+	gsettings set org.gnome.desktop.background picture-uri "'file://${opt_store}/final.png'"
+	gsettings set org.gnome.desktop.screensaver picture-options "'centered'"
+	gsettings set org.gnome.desktop.screensaver picture-uri "'file://${opt_store}/final.png'"
 }
 
 stop () {
 	(( $state_running )) && kill -TERM $pid
-	gsettings set org.gnome.desktop.background picture-uri "$opt_original_desktop"
-	gsettings set org.gnome.desktop.screensaver picture-uri "$opt_original_screensaver"
+	restore_original
+}
+
+toggle_autostart () {
+	if [[ -f ${HOME}/.config/autostart/EarthLiveStart.desktop ]]; then
+		rm -rf ${HOME}/.config/autostart/EarthLiveStart.desktop
+		stop
+		show_dialog --info --text="Won't autostart now."
+	else
+		ln -sf /usr/local/share/applications/EarthLiveStart.desktop ${HOME}/.config/autostart/EarthLiveStart.desktop
+		show_dialog --info --text="Autostart configured!"
+	fi
 }
 
 modify_opt () {
 	sed -i "${opt_store}/EarthLive.rc" -e "/${1}=.*$/D"
-	echo "${1}=${2}" >> "${opt_store}/EarthLive.rc"
+	echo "${1}=${!1}" >> "${opt_store}/EarthLive.rc"
 	state_has_modified=1
+}
+
+show_dialog () {
+	zenity --class="EarthLive" --name="EarthLive" --title="EarthLive" "$@"
 }
 
 options () {
 	while [[ "${ans1}" = "" ]]; do
-		ans=`zenity --class=EarthLive --name=EarthLive \
-			--list --text="Choose an option." \
-			--title="EarthLive" --print-column=1 \
+		ans=`show_dialog --list --text="Choose an option." \
+			--print-column=1 \
 			--column "Name" --column "Description" \
 			"opt_interval" "Interval between two image checks"`
 		[[ "$ans" = "" ]] && break
-		ans1=`zenity --class=EarthLive --name=EarthLive --entry \
+		ans1=`show_dialog --entry \
 			--text="${ans:4} is now ${!ans} minutes. Leave blank if you are not going to change it."`
 		if [[ "$ans" = "opt_interval" ]]; then
 			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]]; then
 				opt_interval="$ans1"
 				modify_opt "opt_interval" "$ans1"
 			else
-				[[ "$ans1" = "" ]] || zenity --class=EarthLive --name=EarthLive \
-					--title="EarthLive" --error --text="What? This is a numeric field!"
+				[[ "$ans1" = "" ]] || show_dialog \
+					--error --text="What? This is a numeric field!"
 			fi
 			# ask for furthur options
 			ans1=""
@@ -77,22 +110,23 @@ options () {
 	fi
 }
 
-if [[ "$1" = "--interactive" ]]; then
+if [[ "$1" == "--start" ]]; then
+	start
+else
 	if (( $state_running )); then
-		MAJOR=`zenity --class=EarthLive --name=EarthLive \
+		MAJOR=`show_dialog \
 			--list --text="EarthLive Service is <b>running</b>." \
-			--title="EarthLive" --column "Ops" "Stop" "Options"`
+			--column "Ops" "Stop" "Options" "Toggle Autostart"`
 	else
-		MAJOR=`zenity --class=EarthLive --name=EarthLive \
+		MAJOR=`show_dialog \
 			--list --text="EarthLive Service is <b>not running</b>." \
-			--title="EarthLive" --column "Ops" "Start" "Options"`
+			--column "Ops" "Start" "Options" "Toggle Autostart"`
 	fi
 	
 	case "$MAJOR" in
-		"Start")	start;;
-		"Stop")		stop;;
-		"Options")	options;;
+		"Start")		start;;
+		"Stop")			stop;;
+		"Options")		options;;
+		"Toggle Autostart")	toggle_autostart;;
 	esac
-else
-	start
 fi

@@ -21,22 +21,44 @@
 [[ "${3}" = "" ]] && opt_res_y=900 || opt_res_y=${3}
 
 opt_store="${HOME}/.earthliveshell"
+opt_log="${opt_store}/EarthLive.log"
 last=""
 
+log () {
+	case "$1" in
+		1)	printf "%b" '[Err]' >> "${opt_log}";;
+		2)	printf "%b" '[Inf]' >> "${opt_log}";;
+	esac
+	printf "[%b] " `date +%F-%T-%Z` >> "${opt_log}"
+	printf "%b\n" "$2" >> "${opt_log}"
+}
+# log [level] [info]
+
 echo $$ > ${opt_store}/pid
+log 2 "Starting"
+
 while ((1)); do
 	img_json=`curl -# "http://himawari8.nict.go.jp/img/D531106/latest.json"`
+	if (( $? )); then
+		log 1 "Refresh failed!"
+		break
+	else
+		log 2 "Fetched Information from web."
+	fi
 	if [[ ! "${last}" = "${img_json}" ]]; then
 		last=${img_json}
 		now=${img_json:9:19}
-		echo $now
 		
-		url_prefix="@cdn_prefix@http:///himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
+		url_prefix="@cdn_prefix@http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
 		url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
 		url_suffix="_0_0.png"
 		url="${url_prefix}${url_time}${url_suffix}"
 		curl -# -o "${opt_store}/orig.png" "$url"
-		convert "${opt_store}/orig.png" -gravity center -background black -extent "${opt_res_x}x${opt_res_y}" "${opt_store}/final.jpg"
+		
+		log 2 "Obtained image from ->"
+		log 2 "$url"
+		
+		cp "${opt_store}/orig.png" "${opt_store}/final.png"
 	fi
 	for ((i=0; i<opt_interval; i++)); do
 		sleep 60
