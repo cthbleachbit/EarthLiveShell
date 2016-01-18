@@ -26,23 +26,29 @@ pid=`cat ${opt_store}/pid`
 save_original () {
 	opt_background_picture_options=$(gsettings get org.gnome.desktop.background picture-options)
 	opt_background_picture_uri=$(gsettings get org.gnome.desktop.background picture-uri)
+	opt_background_primary_color=$(gsettings get org.gnome.desktop.background primary-color)
 	opt_screensaver_picture_options=$(gsettings get org.gnome.desktop.screensaver picture-options)
 	opt_screensaver_picture_uri=$(gsettings get org.gnome.desktop.screensaver picture-uri)
+	opt_screensaver_primary_color=$(gsettings get org.gnome.desktop.screensaver primary-color)
 	
 	[[ $opt_background_picture_uri == *"${opt_store}"* ]] && return 0
 	[[ $opt_screensaver_picture_uri == *"${opt_store}"* ]] && return 0
 	
 	modify_opt "opt_background_picture_options"
 	modify_opt "opt_background_picture_uri"
+	modify_opt "opt_background_primary_color"
 	modify_opt "opt_screensaver_picture_options"
 	modify_opt "opt_screensaver_picture_uri"
+	modify_opt "opt_screensaver_primary_color"
 }
 
 restore_original () {
 	gsettings set org.gnome.desktop.background picture-options "$opt_background_picture_options"
 	gsettings set org.gnome.desktop.background picture-uri "$opt_background_picture_uri"
+	gsettings set org.gnome.desktop.background primary-color "$opt_background_primary_color"
 	gsettings set org.gnome.desktop.screensaver picture-options "$opt_screensaver_picture_options"
 	gsettings set org.gnome.desktop.screensaver picture-uri "$opt_screensaver_picture_uri"
+	gsettings set org.gnome.desktop.screensaver primary-color "$opt_screensaver_primary_color"
 }
 
 start () {
@@ -51,8 +57,10 @@ start () {
 	# picture-options 'none', 'wallpaper', 'centered', 'scaled', 'stretched', 'zoom', 'spanned'
 	gsettings set org.gnome.desktop.background picture-options "'centered'"
 	gsettings set org.gnome.desktop.background picture-uri "'file://${opt_store}/final.png'"
+	gsettings set org.gnome.desktop.background primary-color black
 	gsettings set org.gnome.desktop.screensaver picture-options "'centered'"
 	gsettings set org.gnome.desktop.screensaver picture-uri "'file://${opt_store}/final.png'"
+	gsettings set org.gnome.desktop.screensaver primary-color black
 }
 
 stop () {
