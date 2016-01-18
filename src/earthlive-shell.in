@@ -24,10 +24,10 @@ pid=`cat ${opt_store}/pid`
 . "${opt_store}/EarthLive.rc"
 
 save_original () {
-	opt_background_picture_options=`gsettings get org.gnome.desktop.background picture-options`
-	opt_background_picture_uri=`gsettings get org.gnome.desktop.background picture-uri`
-	opt_screensaver_picture_options=`gsettings get org.gnome.desktop.screensaver picture-options`
-	opt_screensaver_picture_uri=`gsettings get org.gnome.desktop.screensaver picture-uri`
+	opt_background_picture_options=$(gsettings get org.gnome.desktop.background picture-options)
+	opt_background_picture_uri=$(gsettings get org.gnome.desktop.background picture-uri)
+	opt_screensaver_picture_options=$(gsettings get org.gnome.desktop.screensaver picture-options)
+	opt_screensaver_picture_uri=$(gsettings get org.gnome.desktop.screensaver picture-uri)
 	
 	[[ $opt_background_picture_uri == *"${opt_store}"* ]] && exit 0
 	[[ $opt_screensaver_picture_uri == *"${opt_store}"* ]] && exit 0
@@ -83,13 +83,13 @@ show_dialog () {
 
 options () {
 	while [[ "${ans1}" = "" ]]; do
-		ans=`show_dialog --list --text="Choose an option." \
+		ans=$(show_dialog --list --text="Choose an option." \
 			--print-column=1 \
 			--column "Name" --column "Description" \
-			"opt_interval" "Interval between two image checks"`
+			"opt_interval" "Interval between two image checks")
 		[[ "$ans" = "" ]] && break
-		ans1=`show_dialog --entry \
-			--text="${ans:4} is now ${!ans} minutes. Leave blank if you are not going to change it."`
+		ans1=$(show_dialog --entry \
+			--text="${ans:4} is now ${!ans} minutes. Leave blank if you are not going to change it.")
 		if [[ "$ans" = "opt_interval" ]]; then
 			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]]; then
 				opt_interval="$ans1"
@@ -114,13 +114,13 @@ if [[ "$1" == "--start" ]]; then
 	start
 else
 	if (( $state_running )); then
-		MAJOR=`show_dialog \
+		MAJOR=$(show_dialog \
 			--list --text="EarthLive Service is <b>running</b>." \
-			--column "Ops" "Stop" "Options" "Toggle Autostart"`
+			--column "Ops" "Stop" "Options" "Toggle Autostart")
 	else
-		MAJOR=`show_dialog \
+		MAJOR=$(show_dialog \
 			--list --text="EarthLive Service is <b>not running</b>." \
-			--column "Ops" "Start" "Options" "Toggle Autostart"`
+			--column "Ops" "Start" "Options" "Toggle Autostart")
 	fi
 	
 	case "$MAJOR" in
