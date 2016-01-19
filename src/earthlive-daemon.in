@@ -16,10 +16,6 @@
 # interval between image checking in minutes
 [[ "${1}" = "" ]] && opt_interval=30 || opt_interval=${1}
 
-# the resolution of target image
-[[ "${2}" = "" ]] && opt_res_x=1600 || opt_res_x=${2}
-[[ "${3}" = "" ]] && opt_res_y=900 || opt_res_y=${3}
-
 opt_store="${HOME}/.earthliveshell"
 opt_log="${opt_store}/EarthLive.log"
 last=""
@@ -41,24 +37,22 @@ while ((1)); do
 	img_json=$(curl -# "http://himawari8.nict.go.jp/img/D531106/latest.json")
 	if (( $? )); then
 		log 1 "Refresh failed!"
-		break
 	else
 		log 2 "Fetched Information from web."
-	fi
-	if [[ ! "${last}" = "${img_json}" ]]; then
-		last=${img_json}
-		now=${img_json:9:19}
-		
-		url_prefix="@cdn_prefix@http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
-		url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
-		url_suffix="_0_0.png"
-		url="${url_prefix}${url_time}${url_suffix}"
-		curl -# -o "${opt_store}/orig.png" "$url"
-		
-		log 2 "Obtained image from ->"
-		log 2 "$url"
-		
-		cp "${opt_store}/orig.png" "${opt_store}/final.png"
+		if [[ ! "${last}" = "${img_json}" ]]; then
+			last=${img_json}
+			now=${img_json:9:19}
+			
+			url_prefix="@cdn_prefix@http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
+			url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
+			url_suffix="_0_0.png"
+			url="${url_prefix}${url_time}${url_suffix}"
+			curl -# -o "${opt_store}/orig.png" "$url"
+			
+			log 2 "Obtained image at ${now}"
+			
+			cp "${opt_store}/orig.png" "${opt_store}/final.png"
+		fi
 	fi
 	for ((i=0; i<opt_interval; i++)); do
 		sleep 60
