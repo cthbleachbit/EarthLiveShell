@@ -1,8 +1,10 @@
 EarthLiveShell
 ==============
-A [EarthLiveSharp](https://github.com/bitdust/EarthLiveSharp) Linux Shell implementation.
+Live view of the Earth from space, a [EarthLiveSharp](https://github.com/bitdust/EarthLiveSharp) shell script implementation.
 
-Images from [himawari8](http://himawari8.nict.go.jp) are currently delivered by my Cloudinary CDN. Change `cdn-prefix` in `src/Makefile` to your own CDN account.
+![Screenshot](Screenshot.png)
+
+Images from [himawari8](http://himawari8.nict.go.jp) are currently delivered by my Cloudinary CDN. Change `CDN_PREFIX` variable in `src/Makefile` to your own CDN account to prevent CDN quota from exhausting.
 
 Install
 -------
@@ -17,7 +19,9 @@ Requirements
 
 Auto-start on login
 -------------------
-After install, check the `earthlive-shell` for one-click autostart configuration. If you like, you can manually set up autostart by making a symbolic link of `EarthLiveStart.desktop` in `~/.config/autostart`:
+After install, check the `earthlive-shell` for one-click autostart configuration.
+
+If you like, you can manually set up autostart by making a symbolic link of `EarthLiveStart.desktop` in `~/.config/autostart`:
 ```
 ln -sf /usr/local/share/applications/EarthLiveStart.desktop ~/.config/autostart/
 ```
