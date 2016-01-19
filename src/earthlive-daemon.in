@@ -42,16 +42,20 @@ while ((1)); do
 		if [[ ! "${last}" = "${img_json}" ]]; then
 			last=${img_json}
 			now=${img_json:9:19}
+			# Strip time from json
 			
-			url_prefix="@cdn_prefix@http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
+			cdn_prefix="@cdn_prefix@"
+			url_prefix="http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
 			url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
+			# yyyy/mm/dd/hhmmss
 			url_suffix="_0_0.png"
-			url="${url_prefix}${url_time}${url_suffix}"
-			curl -# -o "${opt_store}/orig.png" "$url"
+			url="${cdn_prefix}${url_prefix}${url_time}${url_suffix}"
+			curl -# -o "${opt_sto9re}/orig.png" "$url"
 			
 			log 2 "Obtained image at ${now}"
 			
 			cp "${opt_store}/orig.png" "${opt_store}/final.png"
+			# orig.png will be a concatenated picture in the future versions
 		fi
 	fi
 	for ((i=0; i<opt_interval; i++)); do

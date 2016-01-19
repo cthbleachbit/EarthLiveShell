@@ -19,20 +19,21 @@ opt_store="${HOME}/.earthliveshell"
 opt_interval=30
 state_has_modified=0
 
-pid=`cat ${opt_store}/pid`
+pid=$(cat ${opt_store}/pid)
 [[ -d /proc/$pid ]] && state_running=1 || state_running=0
 . "${opt_store}/EarthLive.rc"
 
 save_original () {
 	opt_background_picture_options=$(gsettings get org.gnome.desktop.background picture-options)
 	opt_background_picture_uri=$(gsettings get org.gnome.desktop.background picture-uri)
+	
+	[[ $opt_background_picture_uri == *"${opt_store}"* ]] && return 0
+	[[ $opt_screensaver_picture_uri == *"${opt_store}"* ]] && return 0
+	
 	opt_background_primary_color=$(gsettings get org.gnome.desktop.background primary-color)
 	opt_screensaver_picture_options=$(gsettings get org.gnome.desktop.screensaver picture-options)
 	opt_screensaver_picture_uri=$(gsettings get org.gnome.desktop.screensaver picture-uri)
 	opt_screensaver_primary_color=$(gsettings get org.gnome.desktop.screensaver primary-color)
-	
-	[[ $opt_background_picture_uri == *"${opt_store}"* ]] && return 0
-	[[ $opt_screensaver_picture_uri == *"${opt_store}"* ]] && return 0
 	
 	modify_opt "opt_background_picture_options"
 	modify_opt "opt_background_picture_uri"
@@ -119,9 +120,9 @@ options () {
 }
 
 if [[ "$1" == "--start" ]]; then
-	start
+	(( state_running )) || start
 else
-	if (( $state_running )); then
+	if (( state_running )); then
 		MAJOR=$(show_dialog \
 			--list --text="EarthLive Service is <b>running</b>." \
 			--column "Ops" "Stop" "Options" "Toggle Autostart")
