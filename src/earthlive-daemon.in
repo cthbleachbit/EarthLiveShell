@@ -50,7 +50,7 @@ while ((1)); do
 			# yyyy/mm/dd/hhmmss
 			url_suffix="_0_0.png"
 			url="${cdn_prefix}${url_prefix}${url_time}${url_suffix}"
-			curl -# -o "${opt_sto9re}/orig.png" "$url"
+			curl -# -o "${opt_store}/orig.png" "$url"
 			
 			log 2 "Obtained image at ${now}"
 			
