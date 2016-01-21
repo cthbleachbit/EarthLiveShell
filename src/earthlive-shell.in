@@ -23,6 +23,7 @@ pid=$(cat ${opt_store}/pid)
 [[ -d /proc/$pid ]] && state_running=1 || state_running=0
 . "${opt_store}/EarthLive.rc"
 
+# Configuration save and restore
 save_original () {
 	opt_background_picture_options=$(gsettings get org.gnome.desktop.background picture-options)
 	opt_background_picture_uri=$(gsettings get org.gnome.desktop.background picture-uri)
@@ -50,6 +51,23 @@ restore_original () {
 	gsettings set org.gnome.desktop.screensaver picture-options "$opt_screensaver_picture_options"
 	gsettings set org.gnome.desktop.screensaver picture-uri "$opt_screensaver_picture_uri"
 	gsettings set org.gnome.desktop.screensaver primary-color "$opt_screensaver_primary_color"
+}
+
+# code reuse section
+show_dialog () {
+	zenity --class="EarthLive" --name="EarthLive" --title="EarthLive" "$@"
+}
+
+
+modify_opt () {
+	sed -i "${opt_store}/EarthLive.rc" -e "/${1}=.*$/D"
+	echo "${1}=${!1}" >> "${opt_store}/EarthLive.rc"
+	state_has_modified=1
+}
+
+# Operational functions
+flush_logs () {
+	echo -n > ${opt_store}/EarthLive.log
 }
 
 start () {
@@ -80,20 +98,10 @@ toggle_autostart () {
 	fi
 }
 
-modify_opt () {
-	sed -i "${opt_store}/EarthLive.rc" -e "/${1}=.*$/D"
-	echo "${1}=${!1}" >> "${opt_store}/EarthLive.rc"
-	state_has_modified=1
-}
-
-show_dialog () {
-	zenity --class="EarthLive" --name="EarthLive" --title="EarthLive" "$@"
-}
-
 options () {
 	while [[ "${ans1}" = "" ]]; do
 		ans=$(show_dialog --list --text="Choose an option." \
-			--print-column=1 \
+			--print-column=1 --height=200 --width=400 \
 			--column "Name" --column "Description" \
 			"opt_interval" "Interval between two image checks")
 		[[ "$ans" = "" ]] && break
@@ -119,17 +127,18 @@ options () {
 	fi
 }
 
+# Main
 if [[ "$1" == "--start" ]]; then
 	(( state_running )) || start
 else
 	if (( state_running )); then
 		MAJOR=$(show_dialog \
-			--list --text="EarthLive Service is <b>running</b>." \
-			--column "Ops" "Stop" "Options" "Toggle Autostart")
+			--list --text="EarthLive Service is <b>running</b>." --height=230 --width=300 \
+			--column "Ops" "Stop" "Options" "Toggle Autostart" "Flush Logs")
 	else
 		MAJOR=$(show_dialog \
-			--list --text="EarthLive Service is <b>not running</b>." \
-			--column "Ops" "Start" "Options" "Toggle Autostart")
+			--list --text="EarthLive Service is <b>not running</b>." --height=230 --width=300 \
+			--column "Ops" "Start" "Options" "Toggle Autostart" "Flush Logs")
 	fi
 	
 	case "$MAJOR" in
@@ -137,5 +146,6 @@ else
 		"Stop")			stop;;
 		"Options")		options;;
 		"Toggle Autostart")	toggle_autostart;;
+		"Flush Logs")		flush_logs;;
 	esac
 fi
