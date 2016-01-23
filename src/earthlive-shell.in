@@ -108,11 +108,11 @@ options () {
 			--print-column=1 --height=200 --width=400 \
 			--column "Parameter" --column "Description" \
 			"opt_interval" "Interval between two image checks in minutes" \
-			"opt_density" "Image Density")
+			"opt_density" "Image Density.")
 		[[ "$ans" = "" ]] && break
-		ans1=$(show_dialog --entry \
-			--text="${ans} is now ${!ans}. Leave blank if you are not going to change it.")
 		if [[ "$ans" = "opt_interval" ]]; then
+			ans1=$(show_dialog --entry \
+				--text="${ans} is now ${!ans} minutes. Leave blank if you are not going to change it.")
 			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]]; then
 				opt_interval="$ans1"
 				modify_opt "opt_interval" "$ans1"
@@ -123,12 +123,14 @@ options () {
 			# ask for furthur options
 			ans1=""
 		elif [[ "$ans" = "opt_density" ]]; then
-			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]] && (( $ans1 <= 20 )) && (( $ans >= 1 )); then
+			ans1=$(show_dialog --entry \
+				--text="${ans:4} is now ${!ans}. Leave blank if you are not going to change it.")
+			if [[ "$ans1" =~ ^[1-5]$ ]]; then
 				opt_density="$ans1"
 				modify_opt "opt_density" "$ans1"
 			else
 				[[ "$ans1" = "" ]] || show_dialog \
-					--error --text="Density must be an interger between 1 and 20."
+					--error --text="Density must be an interger between 1 and 5. To force over, edit ~/.earthliveshell/EarthLive.rc"
 			fi
 			# ask for furthur options
 			ans1=""
