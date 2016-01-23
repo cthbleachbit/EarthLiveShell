@@ -16,7 +16,7 @@
 # interval between image checking in minutes
 opt_interval=${1}
 # image density 
-opt_interval=${2}
+opt_density=${2}
 
 opt_store="${HOME}/.earthliveshell"
 opt_log="${opt_store}/EarthLive.log"
@@ -36,7 +36,7 @@ echo $$ > ${opt_store}/pid
 log 2 "Starting with param $1 $2"
 
 while ((1)); do
-	img_json=$(curl -# "http://himawari8.nict.go.jp/img/D531106/latest.json")
+	img_json=$(curl -Ss "http://himawari8.nict.go.jp/img/D531106/latest.json")
 	if (( $? )); then
 		log 1 "Refresh failed!"
 	else
@@ -50,13 +50,21 @@ while ((1)); do
 			url_prefix="http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
 			url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
 			# yyyy/mm/dd/hhmmss
-			url_suffix="_0_0.png"
-			url="${cdn_prefix}${url_prefix}${url_time}${url_suffix}"
-			curl -# -o "${opt_store}/orig.png" "$url"
 			
-			log 2 "Obtained image at ${now}"
+			for ((i=0; i<opt_density; i++)); do
+				for ((k=0; k<opt_density; k++)); do
+					url_suffix="_${i}_${k}.png"
+					url="${cdn_prefix}${url_prefix}${url_time}${url_suffix}"
+					curl -Ss -o "${opt_store}/tile_${k}_${i}.png" "$url"
+					(( $? )) || log 2 "Obtained tile ${k}_${i} at ${now}"
+				done
+			done
 			
-			cp "${opt_store}/orig.png" "${opt_store}/final.png"
+			if [[ $opt_density -eq 1 ]]; then
+				cp "${opt_store}/tile_0_0.png" "${opt_store}/final.png"
+			else
+				echo .
+			fi
 			# orig.png will be a concatenated picture in the future versions
 		fi
 	fi
