@@ -16,9 +16,13 @@
 opt_store="${HOME}/.earthliveshell"
 [[ -d ${opt_store} ]] || mkdir "${opt_store}"
 [[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
-opt_interval=30
-state_has_modified=0
 
+opt_interval=30
+# default interval: 30 minutes
+opt_density=1
+# default image density: 1d
+
+state_has_modified=0
 pid=$(cat ${opt_store}/pid)
 [[ -d /proc/$pid ]] && state_running=1 || state_running=0
 . "${opt_store}/EarthLive.rc"
@@ -72,7 +76,7 @@ flush_logs () {
 
 start () {
 	save_original
-	setsid earthlive-daemon "$opt_interval" &
+	setsid earthlive-daemon "$opt_interval" "$opt_density" &
 	# picture-options 'none', 'wallpaper', 'centered', 'scaled', 'stretched', 'zoom', 'spanned'
 	gsettings set org.gnome.desktop.background picture-options "'centered'"
 	gsettings set org.gnome.desktop.background picture-uri "'file://${opt_store}/final.png'"
@@ -102,18 +106,29 @@ options () {
 	while [[ "${ans1}" = "" ]]; do
 		ans=$(show_dialog --list --text="Choose an option." \
 			--print-column=1 --height=200 --width=400 \
-			--column "Name" --column "Description" \
-			"opt_interval" "Interval between two image checks")
+			--column "Parameter" --column "Description" \
+			"opt_interval" "Interval between two image checks in minutes" \
+			"opt_density" "Image Density")
 		[[ "$ans" = "" ]] && break
 		ans1=$(show_dialog --entry \
-			--text="${ans:4} is now ${!ans} minutes. Leave blank if you are not going to change it.")
+			--text="${ans} is now ${!ans}. Leave blank if you are not going to change it.")
 		if [[ "$ans" = "opt_interval" ]]; then
 			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]]; then
 				opt_interval="$ans1"
 				modify_opt "opt_interval" "$ans1"
 			else
 				[[ "$ans1" = "" ]] || show_dialog \
-					--error --text="What? This is a numeric field!"
+					--error --text="What? This is a integer only field!"
+			fi
+			# ask for furthur options
+			ans1=""
+		elif [[ "$ans" = "opt_density" ]]; then
+			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]] && (( $ans1 <= 20 )) && (( $ans >= 1 )); then
+				opt_density="$ans1"
+				modify_opt "opt_density" "$ans1"
+			else
+				[[ "$ans1" = "" ]] || show_dialog \
+					--error --text="Density must be an interger between 1 and 20."
 			fi
 			# ask for furthur options
 			ans1=""

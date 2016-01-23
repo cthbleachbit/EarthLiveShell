@@ -14,7 +14,9 @@
 #==========================================================
 
 # interval between image checking in minutes
-[[ "${1}" = "" ]] && opt_interval=30 || opt_interval=${1}
+opt_interval=${1}
+# image density 
+opt_interval=${2}
 
 opt_store="${HOME}/.earthliveshell"
 opt_log="${opt_store}/EarthLive.log"
@@ -31,7 +33,7 @@ log () {
 # log [level] [info]
 
 echo $$ > ${opt_store}/pid
-log 2 "Starting"
+log 2 "Starting with param $1 $2"
 
 while ((1)); do
 	img_json=$(curl -# "http://himawari8.nict.go.jp/img/D531106/latest.json")
