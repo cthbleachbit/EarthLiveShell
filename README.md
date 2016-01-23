@@ -10,9 +10,19 @@ Install
 -------
 Go to `src`, edit `Makefile` if needed, type `make` and `sudo make install`
 
+Options
+-------
+* `opt_interval`
+
+Set the interval between two image checks.
+
+* `opt_density`
+
+Set the density of image. You'll need `imagemagick` installed if you have a Hi-DPI display and want to get a larger image for your desktop.
+
 Requirements
 ------------
-* <s>`imagemagick` for wallpaper generation and tile concatenating.</s>
+* `imagemagick` for wallpaper generation and tile concatenating if `opt_density` is larger than 1
 * `curl` for image and json downloading
 * currently gnome only
 * and a live Internet connection
