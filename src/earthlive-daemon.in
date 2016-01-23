@@ -47,7 +47,7 @@ while ((1)); do
 			# Strip time from json
 			
 			cdn_prefix="@cdn_prefix@"
-			url_prefix="http://himawari8-dl.nict.go.jp/himawari8/img/D531106/1d/550/"
+			url_prefix="http://himawari8-dl.nict.go.jp/himawari8/img/D531106/${opt_density}d/550/"
 			url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
 			# yyyy/mm/dd/hhmmss
 			
@@ -61,9 +61,9 @@ while ((1)); do
 			done
 			
 			if [[ $opt_density -eq 1 ]]; then
-				cp "${opt_store}/tile_0_0.png" "${opt_store}/final.png"
+				cp "${opt_store}/final.png"
 			else
-				echo .
+				montage ${opt_store}/tile_*.png -tile ${opt_density}x${opt_density} -geometry +0+0 ${opt_store}/final.png
 			fi
 			# orig.png will be a concatenated picture in the future versions
 		fi
