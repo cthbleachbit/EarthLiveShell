@@ -97,6 +97,7 @@ toggle_autostart () {
 		stop
 		show_dialog --info --text="Won't autostart now."
 	else
+		[[ -d ${HOME}/.config/autostart ]] || mkdir -p ${HOME}/.config/autostart
 		ln -sf /usr/local/share/applications/EarthLiveStart.desktop ${HOME}/.config/autostart/EarthLiveStart.desktop
 		show_dialog --info --text="Autostart configured!"
 	fi
