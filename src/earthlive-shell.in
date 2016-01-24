@@ -23,7 +23,7 @@ opt_density=1
 # default image density: 1d
 
 state_has_modified=0
-pid=$(cat ${opt_store}/pid)
+[[ -f ${opt_store}/pid ]] && pid=$(cat ${opt_store}/pid) || pid=0
 [[ -d /proc/$pid ]] && state_running=1 || state_running=0
 . "${opt_store}/EarthLive.rc"
 
