@@ -57,7 +57,8 @@ while ((1)); do
 					url_suffix="_${i}_${k}.png"
 					url="${cdn_prefix}${url_prefix}${url_time}${url_suffix}"
 					curl -Ss -o "${opt_store}/tile_${k}_${i}.png" "$url"
-					(( $? )) || log 2 "Obtained tile ${k}_${i} at ${now}" && log 1 "Failed to get tile ${k}_${i} at ${now}"
+					(( $? )) || log 2 "Obtained tile ${k}_${i} at ${now}"
+					(( $? )) && log 1 "Failed to get tile ${k}_${i} at ${now}"
 				done
 			done
 			
