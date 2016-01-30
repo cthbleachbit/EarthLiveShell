@@ -13,6 +13,9 @@
 # License for more details.
 #==========================================================
 
+# Load library
+. '@libdir@/io.lib.sh'
+
 # interval between image checking in minutes
 opt_interval=${1}
 # image density 
@@ -21,16 +24,6 @@ opt_density=${2}
 opt_store="${HOME}/.earthliveshell"
 opt_log="${opt_store}/EarthLive.log"
 last=""
-
-log () {
-	case "$1" in
-		1)	printf "%b" '[Err]' >> "${opt_log}";;
-		2)	printf "%b" '[Inf]' >> "${opt_log}";;
-	esac
-	printf "[%b] " $(date +%F-%T-%Z) >> "${opt_log}"
-	printf "%b\n" "$2" >> "${opt_log}"
-}
-# log [level] [info]
 
 echo $$ > ${opt_store}/pid
 log 2 "Starting with param $1 $2"
