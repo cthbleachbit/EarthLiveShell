@@ -8,7 +8,7 @@ Images from [himawari8](http://himawari8.nict.go.jp) are currently delivered by 
 
 Install
 -------
-Go to `src`, edit `Makefile` if needed, type `make` and `sudo make install`
+__STOP the service before overwriting previous installation or you might lose original wallpaper settings!__ Go to `src`, edit `Makefile` if needed, type `make` and `sudo make install`
 
 Options
 -------
