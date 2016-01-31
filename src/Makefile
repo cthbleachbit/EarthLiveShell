@@ -1,4 +1,4 @@
-SCRIPTS		= earthlive-shell earthlive-daemon lib/io.lib.sh
+SCRIPTS		= earthlive-shell earthlive-daemon lib/io.lib.sh lib/config.lib.sh
 SED			= /bin/sed
 SHELL		= /bin/bash
 PREFIX		= /usr/local
@@ -24,6 +24,7 @@ install:  $(SCRIPTS)
 	$(INSTALL) -m755 earthlive-shell $(DESTDIR)$(bindir)
 	$(INSTALL) -m755 earthlive-daemon $(DESTDIR)$(bindir)
 	$(INSTALL) -m644 lib/io.lib.sh $(DESTDIR)$(libdir)
+	$(INSTALL) -m644 lib/config.lib.sh $(DESTDIR)$(libdir)
 	$(INSTALL) -m644 conf/EarthLiveStart.desktop $(DESTDIR)$(applicationdir)
 	$(INSTALL) -m644 conf/EarthLiveControl.desktop $(DESTDIR)$(applicationdir)
 

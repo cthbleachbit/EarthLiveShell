@@ -13,52 +13,34 @@
 # License for more details.
 #==========================================================
 
-# Load library
+# I/O library
 . '@libdir@/io.lib.sh'
 
+# Check Desktop Environment
+opt_guienv=$(echo "$XDG_CURRENT_DESKTOP" | awk '{print tolower($0)}')
+if [[ ! $opt_guienv =~ gnome|mate|unity ]]; then
+	[[ "$1" == "--start" ]] || show_dialog --error --text="Gnome based systems only" && log 2 "Incompatible DE"
+	# show error information on user start only.
+	exit 1
+fi
+. '@libdir@/config.lib.sh'
+
+# settings database
 opt_store="${HOME}/.earthliveshell"
 [[ -d ${opt_store} ]] || mkdir "${opt_store}"
 [[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
 
-opt_interval=30
 # default interval: 30 minutes
-opt_density=1
-# default image density: 1d
+opt_interval=30
 
+# default image density: 1d
+opt_density=1
+
+# check running state
 state_has_modified=0
 [[ -f ${opt_store}/pid ]] && pid=$(cat ${opt_store}/pid) || pid=0
 [[ -d /proc/$pid ]] && state_running=1 || state_running=0
 . "${opt_store}/EarthLive.rc"
-
-# Configuration save and restore
-save_original () {
-	gnome_background_picture_options=$(gsettings get org.gnome.desktop.background picture-options)
-	gnome_background_picture_uri=$(gsettings get org.gnome.desktop.background picture-uri)
-
-	[[ $gnome_background_picture_uri == *"${opt_store}"* ]] && return 0
-	[[ $gnome_screensaver_picture_uri == *"${opt_store}"* ]] && return 0
-
-	gnome_background_primary_color=$(gsettings get org.gnome.desktop.background primary-color)
-	gnome_screensaver_picture_options=$(gsettings get org.gnome.desktop.screensaver picture-options)
-	gnome_screensaver_picture_uri=$(gsettings get org.gnome.desktop.screensaver picture-uri)
-	gnome_screensaver_primary_color=$(gsettings get org.gnome.desktop.screensaver primary-color)
-
-	modify_opt "gnome_background_picture_options"
-	modify_opt "gnome_background_picture_uri"
-	modify_opt "gnome_background_primary_color"
-	modify_opt "gnome_screensaver_picture_options"
-	modify_opt "gnome_screensaver_picture_uri"
-	modify_opt "gnome_screensaver_primary_color"
-}
-
-restore_original () {
-	gsettings set org.gnome.desktop.background picture-options "$gnome_background_picture_options"
-	gsettings set org.gnome.desktop.background picture-uri "$gnome_background_picture_uri"
-	gsettings set org.gnome.desktop.background primary-color "$gnome_background_primary_color"
-	gsettings set org.gnome.desktop.screensaver picture-options "$gnome_screensaver_picture_options"
-	gsettings set org.gnome.desktop.screensaver picture-uri "$gnome_screensaver_picture_uri"
-	gsettings set org.gnome.desktop.screensaver primary-color "$gnome_screensaver_primary_color"
-}
 
 # code reuse section
 modify_opt () {
@@ -71,13 +53,7 @@ modify_opt () {
 start () {
 	save_original
 	setsid earthlive-daemon "$opt_interval" "$opt_density" &
-	# picture-options 'none', 'wallpaper', 'centered', 'scaled', 'stretched', 'zoom', 'spanned'
-	gsettings set org.gnome.desktop.background picture-options "'centered'"
-	gsettings set org.gnome.desktop.background picture-uri "'file://${opt_store}/final.png'"
-	gsettings set org.gnome.desktop.background primary-color black
-	gsettings set org.gnome.desktop.screensaver picture-options "'centered'"
-	gsettings set org.gnome.desktop.screensaver picture-uri "'file://${opt_store}/final.png'"
-	gsettings set org.gnome.desktop.screensaver primary-color black
+	apply_live
 }
 
 stop () {
@@ -140,14 +116,6 @@ options () {
 }
 
 # Main
-
-## Check Desktop Environment
-opt_guienv=$(echo "$XDG_CURRENT_DESKTOP" | awk '{print tolower($0)}')
-if [[ ! $opt_guienv =~ gnome|mate|unity ]]; then
-	[[ "$1" == "--start" ]] || show_dialog --error --text="Gnome based systems only" && log 2 "Incompatible DE"
-	# show error information on user start only.
-	exit 1
-fi
 
 if [[ "$1" == "--start" ]]; then
 	(( state_running )) || start
