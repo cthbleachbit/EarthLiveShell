@@ -24,7 +24,7 @@ Requirements
 ------------
 * `imagemagick` for wallpaper generation and tile concatenating if `opt_density` is larger than 1
 * `curl` for image and json downloading
-* currently gnome only
+* Gnome, mate or unity
 * and a live Internet connection
 
 Auto-start on login
