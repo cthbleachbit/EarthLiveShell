@@ -33,7 +33,7 @@ while ((1)); do
 	if (( $? )); then
 		log 1 "Refresh failed!"
 	else
-		log 2 "Fetched Information from web."
+		log 2 "Refreshed."
 		if [[ ! "${last}" = "${img_json}" ]]; then
 			last=${img_json}
 			now=${img_json:9:19}
@@ -59,8 +59,8 @@ while ((1)); do
 				cp "${opt_store}/tile_0_0.png" "${opt_store}/final.png"
 			else
 				montage "${opt_store}/tile_*_*.png" -tile ${opt_density}x${opt_density} -geometry +0+0 "${opt_store}/final.png"
+				# generate large image
 			fi
-			# orig.png will be a concatenated picture in the future versions
 		fi
 	fi
 	for ((i=0; i<opt_interval; i++)); do

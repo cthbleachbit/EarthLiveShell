@@ -19,9 +19,12 @@
 # Check Desktop Environment
 opt_guienv=$(echo "$XDG_CURRENT_DESKTOP" | awk '{print tolower($0)}')
 if [[ ! $opt_guienv =~ gnome|mate|unity ]]; then
-	[[ "$1" == "--start" ]] || show_dialog --error --text="Gnome based systems only" && log 2 "Incompatible DE"
+	[[ "$1" == "--start" ]] || show_dialog --error --text="Gnome based DE only!"
+	log 2 "Incompatible DE: $opt_duienv"
 	# show error information on user start only.
 	exit 1
+else
+	log 1 "Frontend invoked in $opt_guienv"
 fi
 . '@libdir@/config.lib.sh'
 
