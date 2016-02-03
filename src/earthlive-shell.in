@@ -37,9 +37,11 @@ opt_interval=30
 opt_density=1
 
 # check running state
+# planning to port to OS X and prevent another process occupying pid
 state_has_modified=0
 [[ -f ${opt_store}/pid ]] && pid=$(cat ${opt_store}/pid) || pid=0
-[[ -d /proc/$pid ]] && state_running=1 || state_running=0
+ps -h --pid $pid | grep earthlive 
+(( $? )) && state_running=0 || state_running=1
 . "${opt_store}/EarthLive.rc"
 
 # code reuse section
