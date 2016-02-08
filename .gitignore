@@ -8,3 +8,4 @@
 # Makefile generated
 src/earthlive-shell
 src/earthlive-daemon
+src/lib/*.sh

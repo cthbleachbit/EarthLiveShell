@@ -13,56 +13,41 @@
 # License for more details.
 #==========================================================
 
+# I/O library
+. '@libdir@/io.lib.sh'
+
+# Check Desktop Environment
+opt_guienv=$(echo "$XDG_CURRENT_DESKTOP" | awk '{print tolower($0)}')
+if [[ ! $opt_guienv =~ gnome|mate|unity ]]; then
+	[[ "$1" == "--start" ]] || show_dialog --error --text="Gnome based DE only!"
+	log 2 "Incompatible DE: $opt_duienv"
+	# show error information on user start only.
+	exit 1
+else
+	log 1 "Frontend invoked in $opt_guienv"
+fi
+. '@libdir@/config.lib.sh'
+
+# settings database
 opt_store="${HOME}/.earthliveshell"
 [[ -d ${opt_store} ]] || mkdir "${opt_store}"
 [[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
 
-opt_interval=30
 # default interval: 30 minutes
-opt_density=1
-# default image density: 1d
+opt_interval=30
 
+# default image density: 1d
+opt_density=1
+
+# check running state
+# planning to port to OS X and prevent another process occupying pid
 state_has_modified=0
 [[ -f ${opt_store}/pid ]] && pid=$(cat ${opt_store}/pid) || pid=0
-[[ -d /proc/$pid ]] && state_running=1 || state_running=0
+ps -h --pid $pid | grep earthlive 
+(( $? )) && state_running=0 || state_running=1
 . "${opt_store}/EarthLive.rc"
 
-# Configuration save and restore
-save_original () {
-	opt_background_picture_options=$(gsettings get org.gnome.desktop.background picture-options)
-	opt_background_picture_uri=$(gsettings get org.gnome.desktop.background picture-uri)
-	
-	[[ $opt_background_picture_uri == *"${opt_store}"* ]] && return 0
-	[[ $opt_screensaver_picture_uri == *"${opt_store}"* ]] && return 0
-	
-	opt_background_primary_color=$(gsettings get org.gnome.desktop.background primary-color)
-	opt_screensaver_picture_options=$(gsettings get org.gnome.desktop.screensaver picture-options)
-	opt_screensaver_picture_uri=$(gsettings get org.gnome.desktop.screensaver picture-uri)
-	opt_screensaver_primary_color=$(gsettings get org.gnome.desktop.screensaver primary-color)
-	
-	modify_opt "opt_background_picture_options"
-	modify_opt "opt_background_picture_uri"
-	modify_opt "opt_background_primary_color"
-	modify_opt "opt_screensaver_picture_options"
-	modify_opt "opt_screensaver_picture_uri"
-	modify_opt "opt_screensaver_primary_color"
-}
-
-restore_original () {
-	gsettings set org.gnome.desktop.background picture-options "$opt_background_picture_options"
-	gsettings set org.gnome.desktop.background picture-uri "$opt_background_picture_uri"
-	gsettings set org.gnome.desktop.background primary-color "$opt_background_primary_color"
-	gsettings set org.gnome.desktop.screensaver picture-options "$opt_screensaver_picture_options"
-	gsettings set org.gnome.desktop.screensaver picture-uri "$opt_screensaver_picture_uri"
-	gsettings set org.gnome.desktop.screensaver primary-color "$opt_screensaver_primary_color"
-}
-
 # code reuse section
-show_dialog () {
-	zenity --class="EarthLive" --name="EarthLive" --title="EarthLive" "$@"
-}
-
-
 modify_opt () {
 	sed -i "${opt_store}/EarthLive.rc" -e "/${1}=.*$/D"
 	echo "${1}=${!1}" >> "${opt_store}/EarthLive.rc"
@@ -70,20 +55,10 @@ modify_opt () {
 }
 
 # Operational functions
-flush_logs () {
-	echo -n > ${opt_store}/EarthLive.log
-}
-
 start () {
 	save_original
 	setsid earthlive-daemon "$opt_interval" "$opt_density" &
-	# picture-options 'none', 'wallpaper', 'centered', 'scaled', 'stretched', 'zoom', 'spanned'
-	gsettings set org.gnome.desktop.background picture-options "'centered'"
-	gsettings set org.gnome.desktop.background picture-uri "'file://${opt_store}/final.png'"
-	gsettings set org.gnome.desktop.background primary-color black
-	gsettings set org.gnome.desktop.screensaver picture-options "'centered'"
-	gsettings set org.gnome.desktop.screensaver picture-uri "'file://${opt_store}/final.png'"
-	gsettings set org.gnome.desktop.screensaver primary-color black
+	apply_live
 }
 
 stop () {
@@ -137,7 +112,7 @@ options () {
 			ans1=""
 		fi
 	done
-	
+
 	# if running previously, restart
 	if (( $state_has_modified & $state_running )); then
 		stop
@@ -146,6 +121,7 @@ options () {
 }
 
 # Main
+
 if [[ "$1" == "--start" ]]; then
 	(( state_running )) || start
 else
@@ -158,7 +134,7 @@ else
 			--list --text="EarthLive Service is <b>not running</b>." --height=230 --width=300 \
 			--column "Ops" "Start" "Options" "Toggle Autostart" "Flush Logs")
 	fi
-	
+
 	case "$MAJOR" in
 		"Start")		start;;
 		"Stop")			stop;;

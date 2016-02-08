@@ -13,6 +13,9 @@
 # License for more details.
 #==========================================================
 
+# Load library
+. '@libdir@/io.lib.sh'
+
 # interval between image checking in minutes
 opt_interval=${1}
 # image density 
@@ -22,16 +25,6 @@ opt_store="${HOME}/.earthliveshell"
 opt_log="${opt_store}/EarthLive.log"
 last=""
 
-log () {
-	case "$1" in
-		1)	printf "%b" '[Err]' >> "${opt_log}";;
-		2)	printf "%b" '[Inf]' >> "${opt_log}";;
-	esac
-	printf "[%b] " $(date +%F-%T-%Z) >> "${opt_log}"
-	printf "%b\n" "$2" >> "${opt_log}"
-}
-# log [level] [info]
-
 echo $$ > ${opt_store}/pid
 log 2 "Starting with param $1 $2"
 
@@ -40,7 +33,7 @@ while ((1)); do
 	if (( $? )); then
 		log 1 "Refresh failed!"
 	else
-		log 2 "Fetched Information from web."
+		log 2 "Refreshed."
 		if [[ ! "${last}" = "${img_json}" ]]; then
 			last=${img_json}
 			now=${img_json:9:19}
@@ -66,8 +59,8 @@ while ((1)); do
 				cp "${opt_store}/tile_0_0.png" "${opt_store}/final.png"
 			else
 				montage "${opt_store}/tile_*_*.png" -tile ${opt_density}x${opt_density} -geometry +0+0 "${opt_store}/final.png"
+				# generate large image
 			fi
-			# orig.png will be a concatenated picture in the future versions
 		fi
 	fi
 	for ((i=0; i<opt_interval; i++)); do

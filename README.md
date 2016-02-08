@@ -8,7 +8,7 @@ Images from [himawari8](http://himawari8.nict.go.jp) are currently delivered by 
 
 Install
 -------
-Go to `src`, edit `Makefile` if needed, type `make` and `sudo make install`
+__STOP the service before overwriting previous installation or you might lose original wallpaper settings!__ Go to `src`, edit `Makefile` if needed, type `make` and `sudo make install`
 
 Options
 -------
@@ -24,7 +24,7 @@ Requirements
 ------------
 * `imagemagick` for wallpaper generation and tile concatenating if `opt_density` is larger than 1
 * `curl` for image and json downloading
-* currently gnome only
+* Gnome, mate or unity
 * and a live Internet connection
 
 Auto-start on login
