@@ -25,11 +25,13 @@ opt_store="${HOME}/.earthliveshell"
 opt_log="${opt_store}/EarthLive.log"
 last=""
 
+url_site="http://himawari8-dl.nict.go.jp/himawari8/img/D531106"
+
 echo $$ > ${opt_store}/pid
 log 2 "Starting with param $1 $2"
 
 while ((1)); do
-	img_json=$(curl -Ss "http://himawari8.nict.go.jp/img/D531106/latest.json")
+	img_json=$(curl -Ss "${url_site}/latest.json")
 	if (( $? )); then
 		log 1 "Refresh failed!"
 	else
@@ -40,7 +42,7 @@ while ((1)); do
 			# Strip time from json
 			
 			cdn_prefix="@cdn_prefix@"
-			url_prefix="http://himawari8-dl.nict.go.jp/himawari8/img/D531106/${opt_density}d/550/"
+			url_prefix="${url_site}/${opt_density}d/550/"
 			url_time="${now:0:4}/${now:5:2}/${now:8:2}/${now:11:2}${now:14:2}${now:17:2}"
 			# yyyy/mm/dd/hhmmss
 			
