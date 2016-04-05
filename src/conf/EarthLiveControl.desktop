@@ -6,4 +6,5 @@ Icon=preferences
 Terminal=false
 Type=Application
 
-Name[en_US]=EarthLive Control
+Name[en_US]=Start EarthLive
+Name[zh_CN]=EarthLive 控制
