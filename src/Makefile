@@ -3,9 +3,11 @@ SED			= /bin/sed
 SHELL		= /bin/bash
 PREFIX		= /usr/local
 INSTALL		= /usr/bin/env install
+MSGFMT		= /usr/bin/msgfmt
 CDN_PREFIX	= http://res.cloudinary.com/cth451/image/fetch/
 DESTDIR		=
 bindir		= $(PREFIX)/bin
+localedir	= $(PREFIX)/share/locale
 libdir		= $(PREFIX)/lib/earthlive-shell
 applicationdir	= $(PREFIX)/share/applications
 
@@ -15,6 +17,7 @@ $(SCRIPTS): ${SCRIPTS:=.in}
 	@echo '	GEN' $@
 	@$(SED) -e 's|@cdn_prefix@|$(CDN_PREFIX)|g' \
 	        -e 's|@libdir@|$(libdir)|g' \
+	        -e 's|@localedir@|$(localedir)|g' \
 	        $@.in > $@
 
 install:  $(SCRIPTS)
@@ -27,6 +30,13 @@ install:  $(SCRIPTS)
 	$(INSTALL) -m644 lib/config.lib.sh $(DESTDIR)$(libdir)
 	$(INSTALL) -m644 conf/EarthLiveStart.desktop $(DESTDIR)$(applicationdir)
 	$(INSTALL) -m644 conf/EarthLiveControl.desktop $(DESTDIR)$(applicationdir)
+	test -x $(MSGFMT) && for file in po/*/*.po; \
+	do \
+	  package=$$(echo $$file | $(SED) -e 's#po/\([^/]\+\).*#\1#'); \
+	  lang=$$(echo $$file | $(SED) -e 's#.*/\([^/]\+\).po#\1#'); \
+	  $(INSTALL) -d $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES; \
+	  $(MSGFMT) -o $(DESTDIR)$(localedir)/$$lang/LC_MESSAGES/$$package.mo $$file; \
+	done
 
 clean:
 	rm -rf $(SCRIPTS)

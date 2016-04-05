@@ -13,13 +13,21 @@
 # License for more details.
 #==========================================================
 
+export TEXTDOMAIN=earthlive-shell
+export TEXTDOMAINDIR='@localedir@'
+
+# settings database
+opt_store="${HOME}/.earthliveshell"
+[[ -d ${opt_store} ]] || mkdir "${opt_store}"
+[[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
+
 # I/O library
 . '@libdir@/io.lib.sh'
 
 # Check Desktop Environment
 opt_guienv=$(echo "$XDG_CURRENT_DESKTOP" | awk '{print tolower($0)}')
 if [[ ! $opt_guienv =~ gnome|mate|unity ]]; then
-	[[ "$1" == "--start" ]] || show_dialog --error --text="Gnome based DE only!"
+	[[ "$1" == "--start" ]] || show_dialog --error --text="$(gettext 'Gnome based DE only!')"
 	log 2 "Incompatible DE: $opt_duienv"
 	# show error information on user start only.
 	exit 1
@@ -27,11 +35,6 @@ else
 	log 1 "Frontend invoked in $opt_guienv"
 fi
 . '@libdir@/config.lib.sh'
-
-# settings database
-opt_store="${HOME}/.earthliveshell"
-[[ -d ${opt_store} ]] || mkdir "${opt_store}"
-[[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
 
 # default interval: 30 minutes
 opt_interval=30
@@ -70,43 +73,43 @@ toggle_autostart () {
 	if [[ -f ${HOME}/.config/autostart/EarthLiveStart.desktop ]]; then
 		rm -rf ${HOME}/.config/autostart/EarthLiveStart.desktop
 		stop
-		show_dialog --info --text="Won't autostart now."
+		show_dialog --info --text="$(gettext 'Will not autostart now.')"
 	else
 		[[ -d ${HOME}/.config/autostart ]] || mkdir -p ${HOME}/.config/autostart
 		ln -sf /usr/local/share/applications/EarthLiveStart.desktop ${HOME}/.config/autostart/EarthLiveStart.desktop
-		show_dialog --info --text="Autostart configured!"
+		show_dialog --info --text="$(gettext 'Autostart configured!')"
 	fi
 }
 
 options () {
 	while [[ "${ans1}" = "" ]]; do
-		ans=$(show_dialog --list --text="Choose an option." \
+		ans=$(show_dialog --list --text="$(gettext 'Choose an option.')" \
 			--print-column=1 --height=200 --width=400 \
-			--column "Parameter" --column "Description" \
-			"opt_interval" "Interval between two image checks in minutes" \
-			"opt_density" "Image Density.")
+			--column "$(gettext 'Parameter')" --column "$(gettext 'Description')" \
+			"opt_interval" "$(gettext 'Interval between two image checks in minutes')" \
+			"opt_density" "$(gettext 'Image Density')")
 		[[ "$ans" = "" ]] && break
 		if [[ "$ans" = "opt_interval" ]]; then
 			ans1=$(show_dialog --entry \
-				--text="${ans} is now ${!ans} minutes. Leave blank if you are not going to change it.")
+				--text="$(_gettext '%s is now %s minutes. Leave blank if you are not going to change it.' ${ans}  ${!ans})")
 			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]]; then
 				opt_interval="$ans1"
 				modify_opt "opt_interval" "$ans1"
 			else
 				[[ "$ans1" = "" ]] || show_dialog \
-					--error --text="What? This is a integer only field!"
+					--error --text="$(gettext 'What? This is a integer only field!')"
 			fi
 			# ask for furthur options
 			ans1=""
 		elif [[ "$ans" = "opt_density" ]]; then
 			ans1=$(show_dialog --entry \
-				--text="${ans:4} is now ${!ans}. Leave blank if you are not going to change it.")
+				--text="$(_gettext '%s is now %s. Leave blank if you are not going to change it.' ${ans}  ${!ans})")
 			if [[ "$ans1" =~ ^(1|2|4)$ ]]; then
 				opt_density="$ans1"
 				modify_opt "opt_density" "$ans1"
 			else
 				[[ "$ans1" = "" ]] || show_dialog \
-					--error --text="Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, edit ~/.earthliveshell/EarthLive.rc"
+					--error --text="$(gettext 'Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, edit ~/.earthliveshell/EarthLive.rc')"
 			fi
 			# ask for furthur options
 			ans1=""
@@ -127,12 +130,22 @@ if [[ "$1" == "--start" ]]; then
 else
 	if (( state_running )); then
 		MAJOR=$(show_dialog \
-			--list --text="EarthLive Service is <b>running</b>." --height=230 --width=300 \
-			--column "Ops" "Stop" "Options" "Toggle Autostart" "Flush Logs")
+			--list --text="$(gettext 'EarthLive Service is <b>running</b>.')" --height=230 --width=300 \
+			--print-column=2 --hide-column=2 \
+			--column "Ops"		--column "code" \
+			"$(gettext 'Stop')"				"Stop" \
+			"$(gettext 'Options')"			"Options" \
+			"$(gettext 'Toggle Autostart')"	"Toggle Autostart" \
+			"$(gettext 'Flush Logs')"		"Flush Logs")
 	else
 		MAJOR=$(show_dialog \
-			--list --text="EarthLive Service is <b>not running</b>." --height=230 --width=300 \
-			--column "Ops" "Start" "Options" "Toggle Autostart" "Flush Logs")
+			--list --text="$(gettext 'EarthLive Service is <b>not running</b>.')" --height=230 --width=300 \
+			--print-column=2 --hide-column=2 \
+			--column "Ops"		--column "code" \
+			"$(gettext 'Start')"			"Start" \
+			"$(gettext 'Options')"			"Options" \
+			"$(gettext 'Toggle Autostart')"	"Toggle Autostart" \
+			"$(gettext 'Flush Logs')"		"Flush Logs")
 	fi
 
 	case "$MAJOR" in

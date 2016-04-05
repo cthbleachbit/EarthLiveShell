@@ -18,7 +18,7 @@ log () {
 		1)	printf "%b" '[Err]' >> "${opt_log}";;
 		2)	printf "%b" '[Inf]' >> "${opt_log}";;
 	esac
-	printf "[%b] " $(date +%F-%T-%Z) >> "${opt_log}"
+	printf "%b " $(date +%F-%T-%Z) >> "${opt_log}"
 	printf "%b\n" "$2" >> "${opt_log}"
 }
 # log [level] [info]
@@ -31,3 +31,7 @@ show_dialog () {
 	zenity --class="EarthLive" --name="EarthLive" --title="EarthLive" "$@"
 }
 
+_gettext() {
+	local str=$1; shift
+	printf "$(gettext "$str")" "$@"
+}
