@@ -20,6 +20,7 @@ export TEXTDOMAINDIR='@localedir@'
 opt_store="${HOME}/.earthliveshell"
 [[ -d ${opt_store} ]] || mkdir "${opt_store}"
 [[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
+opt_log="${opt_store}/EarthLive.log"
 
 # I/O library
 . '@libdir@/io.lib.sh'
@@ -127,6 +128,7 @@ options () {
 
 if [[ "$1" == "--start" ]]; then
 	(( state_running )) || start
+	log 1 "Direct Start."
 else
 	if (( state_running )); then
 		MAJOR=$(show_dialog \

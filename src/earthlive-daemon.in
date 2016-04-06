@@ -28,15 +28,16 @@ last=""
 url_site="http://himawari8-dl.nict.go.jp/himawari8/img/D531106"
 
 echo $$ > ${opt_store}/pid
-log 2 "Starting with param $1 $2"
+log 1 "Starting with param $1 $2"
 
 while ((1)); do
 	img_json=$(curl -Ss "${url_site}/latest.json")
 	if (( $? )); then
-		log 1 "Refresh failed!"
+		log 2 "Refresh failed!"
 	else
-		log 2 "Refreshed."
+		log 1 "Refreshed."
 		if [[ ! "${last}" = "${img_json}" ]]; then
+			log 1 "Update found."
 			last=${img_json}
 			now=${img_json:9:19}
 			# Strip time from json
@@ -52,8 +53,8 @@ while ((1)); do
 					url_suffix="_${i}_${k}.png"
 					url="${cdn_prefix}${url_prefix}${url_time}${url_suffix}"
 					curl -Ss -o "${opt_store}/tile_${k}_${i}.png" "$url"
-					(( $? )) || log 2 "Obtained tile ${k}_${i} at ${now}"
-					(( $? )) && log 1 "Failed to get tile ${k}_${i} at ${now}"
+					(( $? )) || log 1 "Obtained tile ${k}_${i} at ${now}"
+					(( $? )) && log 2 "Failed to get tile ${k}_${i} at ${now}"
 				done
 			done
 			

@@ -15,8 +15,8 @@
 
 log () {
 	case "$1" in
-		1)	printf "%b" '[Err]' >> "${opt_log}";;
-		2)	printf "%b" '[Inf]' >> "${opt_log}";;
+		1)	printf "%b" '[Inf]' >> "${opt_log}";;
+		2)	printf "%b" '[Err]' >> "${opt_log}";;
 	esac
 	printf "%b " $(date +%F-%T-%Z) >> "${opt_log}"
 	printf "%b\n" "$2" >> "${opt_log}"
