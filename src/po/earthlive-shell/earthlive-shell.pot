@@ -1,0 +1,77 @@
+# EarthLiveShell default.po file
+# Copyright (C) 2016
+# This file is distributed under the same license as the EarthLiveShell package.
+# James Chai <cth451@gmail.com>, 2016
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Report-Msgid-Bugs-To: https://github.com/cthbleachbit/EarthLiveShell\n"
+"POT-Creation-Date: 2016-04-05 15:41+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: cth451 <cth451@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: EarthLiveShell\n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.7.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: gettext\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-SearchPath-0: earthlive-shell.in\n"
+"X-Poedit-SearchPath-1: earthlive-shell\n"
+
+msgid "Gnome based DE only!"
+msgstr ""
+
+msgid "Will not autostart now."
+msgstr ""
+
+msgid "Choose an option."
+msgstr ""
+
+msgid "Parameter"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Interval between two image checks in minutes"
+msgstr ""
+
+msgid "Image Density"
+msgstr ""
+
+msgid "%s is now %s minutes. Leave blank if you are not going to change it."
+msgstr ""
+
+msgid "What? This is a integer only field!"
+msgstr ""
+
+msgid "%s is now %s. Leave blank if you are not going to change it."
+msgstr ""
+
+msgid "Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, edit ~/.earthliveshell/EarthLive.rc"
+msgstr ""
+
+msgid "EarthLive Service is <b>running</b>."
+msgstr ""
+
+msgid "EarthLive Service is <b>not running</b>."
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "Start"
+msgstr ""
+
+msgid "Options"
+msgstr ""
+
+msgid "Toggle Autostart"
+msgstr ""
+
+msgid "Flush Logs"
+msgstr ""
