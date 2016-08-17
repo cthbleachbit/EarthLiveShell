@@ -22,6 +22,10 @@ opt_store="${HOME}/.earthliveshell"
 [[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
 opt_log="${opt_store}/EarthLive.log"
 
+# cache
+cache_store="/tmp/earthliveshell-${USER}"
+[[ -d ${cache_store} ]] || mkdir "${cache_store}"
+
 # I/O library
 . '@libdir@/io.lib.sh'
 
