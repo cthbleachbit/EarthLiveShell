@@ -51,7 +51,7 @@ opt_density=1
 # planning to port to OS X and prevent another process occupying pid
 state_has_modified=0
 [[ -f ${opt_store}/pid ]] && pid=$(cat ${opt_store}/pid) || pid=0
-ps -h --pid $pid | grep earthlive 
+cat /proc/"$pid"/cmdline | grep -a earthlive
 (( $? )) && state_running=0 || state_running=1
 . "${opt_store}/EarthLive.rc"
 
@@ -65,7 +65,7 @@ modify_opt () {
 # Operational functions
 start () {
 	save_original
-	setsid earthlive-daemon "$opt_interval" "$opt_density" &
+	earthlive-daemon "$opt_interval" "$opt_density" &
 	apply_live
 }
 
@@ -96,7 +96,7 @@ options () {
 		[[ "$ans" = "" ]] && break
 		if [[ "$ans" = "opt_interval" ]]; then
 			ans1=$(show_dialog --entry \
-				--text="$(_gettext '%s is now %s minutes. Leave blank if you are not going to change it.' ${ans}  ${!ans})")
+				--text="$(_gettext '%s is now %s minutes. Leave blank if you are not going to change it.' ${ans} ${!ans})")
 			if [[ "$ans1" =~ ^[1-9][0-9]*$ ]]; then
 				opt_interval="$ans1"
 				modify_opt "opt_interval" "$ans1"
@@ -108,7 +108,7 @@ options () {
 			ans1=""
 		elif [[ "$ans" = "opt_density" ]]; then
 			ans1=$(show_dialog --entry \
-				--text="$(_gettext '%s is now %s. Leave blank if you are not going to change it.' ${ans}  ${!ans})")
+				--text="$(_gettext '%s is now %s. Leave blank if you are not going to change it.' ${ans} ${!ans})")
 			if [[ "$ans1" =~ ^(1|2|4)$ ]]; then
 				opt_density="$ans1"
 				modify_opt "opt_density" "$ans1"
@@ -129,7 +129,6 @@ options () {
 }
 
 # Main
-
 if [[ "$1" == "--start" ]]; then
 	(( state_running )) || start
 	log 1 "Direct Start."
