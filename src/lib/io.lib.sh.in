@@ -25,6 +25,11 @@ log () {
 
 flush_logs () {
 	echo -n > ${opt_store}/EarthLive.log
+	log 1 "Logs flushed"
+}
+
+check_logs () {
+	xdg-open ${opt_store}/EarthLive.log
 }
 
 show_dialog () {

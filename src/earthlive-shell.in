@@ -142,7 +142,8 @@ else
 			"$(gettext 'Stop')"				"Stop" \
 			"$(gettext 'Options')"			"Options" \
 			"$(gettext 'Toggle Autostart')"	"Toggle Autostart" \
-			"$(gettext 'Flush Logs')"		"Flush Logs")
+			"$(gettext 'Flush Logs')"		"Flush Logs" \
+			"$(gettext 'Check Logs')"		"Check Logs")
 	else
 		MAJOR=$(show_dialog \
 			--list --text="$(gettext 'EarthLive Service is <b>not running</b>.')" --height=230 --width=300 \
@@ -151,7 +152,8 @@ else
 			"$(gettext 'Start')"			"Start" \
 			"$(gettext 'Options')"			"Options" \
 			"$(gettext 'Toggle Autostart')"	"Toggle Autostart" \
-			"$(gettext 'Flush Logs')"		"Flush Logs")
+			"$(gettext 'Flush Logs')"		"Flush Logs" \
+			"$(gettext 'Check Logs')"		"Check Logs")
 	fi
 
 	case "$MAJOR" in
@@ -160,5 +162,6 @@ else
 		"Options")		options;;
 		"Toggle Autostart")	toggle_autostart;;
 		"Flush Logs")		flush_logs;;
+		"Check Logs")		check_logs;;
 	esac
 fi

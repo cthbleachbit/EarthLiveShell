@@ -75,3 +75,6 @@ msgstr ""
 
 msgid "Flush Logs"
 msgstr ""
+
+msgid "Check Logs"
+msgstr ""

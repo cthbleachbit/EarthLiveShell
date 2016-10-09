@@ -75,3 +75,7 @@ msgstr "切换自动启动"
 msgid "Flush Logs"
 msgstr "清除日志"
 
+
+msgid "Check Logs"
+msgstr "检查日志"
+
