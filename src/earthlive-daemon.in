@@ -29,7 +29,7 @@ last=""
 url_site="http://himawari8-dl.nict.go.jp/himawari8/img/D531106"
 
 echo $$ > ${opt_store}/pid
-log 1 "Starting with param $1 $2"
+log 1 "Starting with param $1 $2 and pid $$"
 
 while ((1)); do
 	img_json=$(curl -Ss "${url_site}/latest.json")
