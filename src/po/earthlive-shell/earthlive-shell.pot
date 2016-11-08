@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/cthbleachbit/EarthLiveShell\n"
-"POT-Creation-Date: 2016-04-05 15:41+0800\n"
+"POT-Creation-Date: 2016-11-07 20:43-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: cth451 <cth451@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr ""
 "X-Poedit-SearchPath-0: earthlive-shell.in\n"
 "X-Poedit-SearchPath-1: earthlive-shell\n"
 
-msgid "Gnome based DE only!"
+msgid "Gsettings based DE only!"
 msgstr ""
 
 msgid "Will not autostart now."

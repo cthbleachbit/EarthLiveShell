@@ -87,5 +87,33 @@ elif [[ "$opt_guienv" == "mate" ]]; then
 		gsettings set org.mate.background primary-color black
 		gsettings set org.mate.background secondary-color black
 	}
+elif [[ "$opt_guienv" == "x-cinnamon" ]]; then
+	save_original () {
+		cinnamon_background_picture_options=$(gsettings get org.cinnamon.desktop.background picture-options)
+		cinnamon_background_picture_uri=$(gsettings get org.cinnamon.desktop.background picture-uri)
+	
+		[[ $cinnamon_background_picture_uri == *"${opt_store}"* ]] && return 0
+	
+		cinnamon_background_primary_color=$(gsettings get org.cinnamon.desktop.background primary-color)
+		cinnamon_background_secondary_color=$(gsettings get org.cinnamon.desktop.background secondary-color)
+		modify_opt "cinnamon_background_picture_options"
+		modify_opt "cinnamon_background_picture_uri"
+		modify_opt "cinnamon_background_primary_color"
+		modify_opt "cinnamon_background_secondary_color"
+	}
+
+	restore_original () {
+		gsettings set org.cinnamon.desktop.background picture-options "$cinnamon_background_picture_options"
+		gsettings set org.cinnamon.desktop.background picture-uri "$cinnamon_background_picture_uri"
+		gsettings set org.cinnamon.desktop.background primary-color "$cinnamon_background_primary_color"
+		gsettings set org.cinnamon.desktop.background secondary-color "$cinnamon_background_secondary_color"
+	}
+
+	apply_live () {
+		gsettings set org.cinnamon.desktop.background picture-options "'centered'"
+		gsettings set org.cinnamon.desktop.background picture-uri "'file://${opt_store}/final.png'"
+		gsettings set org.cinnamon.desktop.background primary-color black
+		gsettings set org.cinnamon.desktop.background secondary-color black
+	}
 fi
 

@@ -31,8 +31,8 @@ cache_store="/tmp/earthliveshell-${USER}"
 
 # Check Desktop Environment
 opt_guienv=$(echo "$XDG_CURRENT_DESKTOP" | awk '{print tolower($0)}')
-if [[ ! $opt_guienv =~ gnome|mate|unity ]]; then
-	[[ "$1" == "--start" ]] || show_dialog --error --text="$(gettext 'Gnome based DE only!')"
+if [[ ! $opt_guienv =~ gnome|mate|unity|x-cinnamon ]]; then
+	[[ "$1" == "--start" ]] || show_dialog --error --text="$(gettext 'Gsettings based DE only!')"
 	log 2 "Incompatible DE: $opt_duienv"
 	# show error information on user start only.
 	exit 1
