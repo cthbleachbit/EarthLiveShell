@@ -138,6 +138,7 @@ else
 			--list --text="$(gettext 'EarthLive Service is <b>running</b>.')" --height=230 --width=300 \
 			--print-column=2 --hide-column=2 \
 			--column "Ops"		--column "code" \
+			"$(gettext 'Restart')"			"Restart" \
 			"$(gettext 'Stop')"				"Stop" \
 			"$(gettext 'Options')"			"Options" \
 			"$(gettext 'Toggle Autostart')"	"Toggle Autostart" \
@@ -156,6 +157,7 @@ else
 	fi
 
 	case "$MAJOR" in
+		"Restart")		stop&&start;;
 		"Start")		start;;
 		"Stop")			stop;;
 		"Options")		options;;

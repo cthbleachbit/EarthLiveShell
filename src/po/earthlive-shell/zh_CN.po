@@ -60,6 +60,9 @@ msgstr "EarthLive 后台进程<b>运行中</b>"
 msgid "EarthLive Service is <b>not running</b>."
 msgstr "EarthLive 后台进程<b>没有启动</b>"
 
+msgid "Restart"
+msgstr "重新启动"
+
 msgid "Stop"
 msgstr "停止"
 

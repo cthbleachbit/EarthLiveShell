@@ -61,6 +61,9 @@ msgstr ""
 msgid "EarthLive Service is <b>not running</b>."
 msgstr ""
 
+msgid "Restart"
+msgstr ""
+
 msgid "Stop"
 msgstr ""
 
