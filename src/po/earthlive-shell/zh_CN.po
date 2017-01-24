@@ -49,13 +49,16 @@ msgstr "%s 目前是 %s 。留空以放弃更改参数。"
 
 msgid ""
 "Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, "
-"edit ~/.earthliveshell/EarthLive.rc"
+"edit ~/.earthliveshell/earthlive.conf"
 msgstr ""
 "图像密度必须是 1，2，4 中的一个。要设定更高的数值（8，10，16，20），请手动"
-"编辑 ~/.earthliveshell/EarthLive.rc"
+"编辑 ~/.earthliveshell/earthlive.conf"
 
 msgid "EarthLive Service is <b>running</b>."
 msgstr "EarthLive 后台进程<b>运行中</b>"
+
+msgid "Last update: "
+msgstr "最近一次更新："
 
 msgid "EarthLive Service is <b>not running</b>."
 msgstr "EarthLive 后台进程<b>没有启动</b>"

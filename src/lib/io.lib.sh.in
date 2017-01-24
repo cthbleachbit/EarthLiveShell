@@ -24,12 +24,12 @@ log () {
 # log [level] [info]
 
 flush_logs () {
-	echo -n > ${opt_store}/EarthLive.log
+	echo -n > ${opt_store}/earthlive.log
 	log 1 "Logs flushed"
 }
 
 check_logs () {
-	xdg-open ${opt_store}/EarthLive.log
+	xdg-open ${opt_store}/earthlive.log
 }
 
 show_dialog () {

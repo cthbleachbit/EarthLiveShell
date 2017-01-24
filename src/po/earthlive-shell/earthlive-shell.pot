@@ -52,10 +52,15 @@ msgstr ""
 msgid "%s is now %s. Leave blank if you are not going to change it."
 msgstr ""
 
-msgid "Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, edit ~/.earthliveshell/EarthLive.rc"
+msgid ""
+"Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, "
+"edit ~/.earthliveshell/earthlive.conf"
 msgstr ""
 
 msgid "EarthLive Service is <b>running</b>."
+msgstr ""
+
+msgid "Last update: "
 msgstr ""
 
 msgid "EarthLive Service is <b>not running</b>."

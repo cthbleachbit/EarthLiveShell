@@ -19,8 +19,8 @@ export TEXTDOMAINDIR='@localedir@'
 # settings database
 opt_store="${HOME}/.earthliveshell"
 [[ -d ${opt_store} ]] || mkdir "${opt_store}"
-[[ -f ${opt_store}/EarthLive.rc ]] || touch "${opt_store}/EarthLive.rc"
-opt_log="${opt_store}/EarthLive.log"
+[[ -f ${opt_store}/earthlive.conf ]] || touch "${opt_store}/earthlive.conf"
+opt_log="${opt_store}/earthlive.log"
 
 # cache
 cache_store="/tmp/earthliveshell-${USER}"
@@ -53,12 +53,13 @@ state_has_modified=0
 [[ -f ${opt_store}/pid ]] && pid=$(cat ${opt_store}/pid) || pid=0
 cat /proc/"$pid"/cmdline | grep -a earthlive
 (( $? )) && state_running=0 || state_running=1
-. "${opt_store}/EarthLive.rc"
+(( $? )) || state_last_update="$(cat ~/.earthliveshell/last_update) UTC"
+. "${opt_store}/earthlive.conf"
 
 # code reuse section
 modify_opt () {
-	sed -i "${opt_store}/EarthLive.rc" -e "/${1}=.*$/D"
-	echo "${1}=${!1}" >> "${opt_store}/EarthLive.rc"
+	sed -i "${opt_store}/earthlive.conf" -e "/${1}=.*$/D"
+	echo "${1}=${!1}" >> "${opt_store}/earthlive.conf"
 	state_has_modified=1
 }
 
@@ -114,7 +115,7 @@ options () {
 				modify_opt "opt_density" "$ans1"
 			else
 				[[ "$ans1" = "" ]] || show_dialog \
-					--error --text="$(gettext 'Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, edit ~/.earthliveshell/EarthLive.rc')"
+					--error --text="$(gettext 'Density must be one of 1, 2 and 4. To set it higher to 8, 10, 16 and 20, edit ~/.earthliveshell/earthlive.conf')"
 			fi
 			# ask for furthur options
 			ans1=""
@@ -135,7 +136,7 @@ if [[ "$1" == "--start" ]]; then
 else
 	if (( state_running )); then
 		MAJOR=$(show_dialog \
-			--list --text="$(gettext 'EarthLive Service is <b>running</b>.')" --height=230 --width=300 \
+			--list --text="$(gettext 'EarthLive Service is <b>running</b>.') $(gettext 'Last update: ')${state_last_update}" --height=230 --width=300 \
 			--print-column=2 --hide-column=2 \
 			--column "Ops"		--column "code" \
 			"$(gettext 'Restart')"			"Restart" \
