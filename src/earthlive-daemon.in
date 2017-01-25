@@ -20,23 +20,25 @@
 opt_interval=${1}
 # image density 
 opt_density=${2}
+# verbose
+opt_verbose=${3}
 
 opt_store="${HOME}/.earthliveshell"
 cache_store="/tmp/earthliveshell-${USER}"
-opt_log="${opt_store}/EarthLive.log"
+opt_log="${opt_store}/earthlive.log"
 last=""
 
 url_site="http://himawari8-dl.nict.go.jp/himawari8/img/D531106"
 
 echo $$ > ${opt_store}/pid
-log 1 "Starting with param $1 $2 and pid $$"
+log 1 "Starting with param $1 $2. PID $$"
 
 while ((1)); do
 	img_json=$(curl -Ss "${url_site}/latest.json")
 	if (( $? )); then
 		log 2 "Refresh failed!"
 	else
-		log 1 "Refreshed."
+		((${opt_verbose})) && log 1 "Refreshed."
 		if [[ ! "${last}" = "${img_json}" ]]; then
 			log 1 "Update found."
 			last=${img_json}
@@ -55,8 +57,11 @@ while ((1)); do
 					url_suffix="_${i}_${k}.png"
 					url="${cdn_prefix}${url_prefix}${url_time}${url_suffix}"
 					curl -Ss -o "${cache_store}/tile_${k}_${i}.png" "$url"
-					(( $? )) || log 1 "Obtained tile ${k}_${i} at ${now}"
-					(( $? )) && log 2 "Failed to get tile ${k}_${i} at ${now}"
+					if (( $? )); then
+						log 2 "Failed to get tile ${k}_${i} at ${now}"
+					else
+						((${opt_verbose})) && log 1 "Obtained tile ${k}_${i} at ${now}"
+					fi
 				done
 			done
 			
