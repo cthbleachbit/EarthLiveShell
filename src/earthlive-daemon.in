@@ -43,7 +43,6 @@ while ((1)); do
 			log 1 "Update found."
 			last=${img_json}
 			now=${img_json:9:19}
-			echo $now > ${opt_store}/last_update
 			# Strip time from json
 			
 			cdn_prefix="@cdn_prefix@"
@@ -71,6 +70,7 @@ while ((1)); do
 				montage "${cache_store}/tile_*_*.png" -tile ${opt_density}x${opt_density} -geometry +0+0 "${opt_store}/final.png"
 				# generate large image
 			fi
+			echo $now > ${opt_store}/last_update
 		fi
 	fi
 	for ((i=0; i<opt_interval; i++)); do
