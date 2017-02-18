@@ -18,6 +18,7 @@ $(SCRIPTS): ${SCRIPTS:=.in}
 	@$(SED) -e 's|@cdn_prefix@|$(CDN_PREFIX)|g' \
 	        -e 's|@libdir@|$(libdir)|g' \
 	        -e 's|@localedir@|$(localedir)|g' \
+	        -e "s|@ver@|`git rev-list --count HEAD`.`git rev-parse --short HEAD`|g" \
 	        $@.in > $@
 
 install:  $(SCRIPTS)

@@ -13,6 +13,8 @@
 # License for more details.
 #==========================================================
 
+VERSION='@ver'
+
 log () {
 	case "$1" in
 		1)	printf "%b" '[Inf]' >> "${opt_log}";;
@@ -33,7 +35,7 @@ check_logs () {
 }
 
 show_dialog () {
-	zenity --class="EarthLive" --name="EarthLive" --title="EarthLive" "$@"
+	zenity --class="EarthLive" --name="EarthLive" --title="EarthLive ${VERSION}" "$@"
 }
 
 _gettext() {
