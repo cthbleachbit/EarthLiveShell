@@ -5,7 +5,6 @@ PREFIX		= /usr/local
 INSTALL		= /usr/bin/env install
 MSGFMT		= /usr/bin/msgfmt
 CDN_PREFIX	= 
-DESTDIR		=
 bindir		= $(PREFIX)/bin
 localedir	= $(PREFIX)/share/locale
 libdir		= $(PREFIX)/lib/earthlive-shell
